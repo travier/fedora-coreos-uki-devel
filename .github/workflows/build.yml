@@ -31,7 +31,7 @@ jobs:
       image: quay.io/coreos-assembler/coreos-assembler:latest
       env:
         COSA_PRIVILEGED: 1
-      options: "--security-opt=label=disable --privileged --user 0:0 --device=/dev/kvm --device=/dev/fuse --tmpfs=/tmp"
+      options: --security-opt=label=disable --privileged --user 0:0 --device=/dev/kvm --device=/dev/fuse --tmpfs=/tmp --volume /var/lib/containers:/var/lib/containers:rw
     steps:
       # - name: Generate a key for ostree signing
       #   run: ./gen-ostree-signing-key
