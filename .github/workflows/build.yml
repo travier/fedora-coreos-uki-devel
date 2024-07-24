@@ -35,7 +35,8 @@ jobs:
     steps:
       - name: WIP
         run: |
-          sed -i "s/sudo / /g" /usr/lib/coreos-assembler/*
+          sed -i "s/sudo -E / /g" /usr/lib/coreos-assembler/cmd*
+          sed -i "s/sudo / /g" /usr/lib/coreos-assembler/cmd*
           cosa init "https://github.com/travier/fedora-coreos-uki-devel.git"
           cosa build
 
