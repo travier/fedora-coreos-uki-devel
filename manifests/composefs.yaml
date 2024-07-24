@@ -1,0 +1,9 @@
+# Enable composefs by default.
+ostree-layers:
+  - overlay/08composefs
+
+# Add packages to generated UKI and sign it
+packages:
+  - sbsigntools
+  - systemd-boot-unsigned
+  - systemd-ukify

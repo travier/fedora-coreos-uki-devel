@@ -30,6 +30,9 @@ conditional-include:
   # Wifi firmwares will be dropped in F41
   - if: releasever < 41
     include: wifi-firmwares.yaml
+  # Dummy test for now
+  - if: releasever > 39
+    include: composefs.yaml
 
 ostree-layers:
   - overlay/15fcos
@@ -152,8 +155,8 @@ exclude-packages:
   - python
   - python2
   - python2-libs
-  - python3
-  - python3-libs
+  # - python3
+  # - python3-libs
   - perl
   - perl-interpreter
   - nodejs
