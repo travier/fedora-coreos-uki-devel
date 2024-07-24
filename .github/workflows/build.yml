@@ -1,0 +1,51 @@
+name: "Build Fedora CoreOS UKI image"
+
+env:
+  NAME: "fedora-coreos-uki"
+  REGISTRY: "quay.io/travier"
+
+on:
+  # pull_request:
+  #   branches:
+  #     - main
+  push:
+    # branches:
+    #   - main
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+permissions: read-all
+
+# Prevent multiple workflow runs from racing to ensure that pushes are made
+# sequentialy for the main branch. Also cancel in progress workflow runs for
+# pull requests only.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build-push-image:
+    runs-on: ubuntu-24.04
+    container:
+      image: quay.io/coreos-assembler/coreos-assembler:latest
+      env:
+        COSA_PRIVILEGED: 1
+      options: "--security-opt=label=disable --privileged --user 0:0 --device=/dev/kvm --device=/dev/fuse --tmpfs=/tmp"
+    steps:
+      - name: WIP
+        run: |
+          sed -i "s/sudo / /g" /usr/lib/coreos-assembler/*
+          cosa init "https://github.com/travier/fedora-coreos-uki-devel.git"
+          cosa build
+
+      - name: Generate a key for ostree signing
+        run: ./gen-ostree-signing-key
+
+      - name: Build container image
+        run: |
+          ls
+
+      - name: Push to Container Registry
+        run: |
+          ls
