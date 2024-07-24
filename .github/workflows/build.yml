@@ -33,20 +33,28 @@ jobs:
         COSA_PRIVILEGED: 1
       options: "--security-opt=label=disable --privileged --user 0:0 --device=/dev/kvm --device=/dev/fuse --tmpfs=/tmp"
     steps:
-      - name: WIP
+      # - name: Generate a key for ostree signing
+      #   run: ./gen-ostree-signing-key
+
+      - name: Build container & qcow2 image
         run: |
           sed -i "s/sudo -E / /g" /usr/lib/coreos-assembler/cmd*
           sed -i "s/sudo / /g" /usr/lib/coreos-assembler/cmd*
           cosa init "https://github.com/travier/fedora-coreos-uki-devel.git"
           cosa build
 
-      - name: Generate a key for ostree signing
-        run: ./gen-ostree-signing-key
-
-      - name: Build container image
-        run: |
-          ls
+      - name: Login to Container Registry
+        uses: redhat-actions/podman-login@v1
+        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.BOT_USERNAME }}
+          password: ${{ secrets.BOT_SECRET }}
 
       - name: Push to Container Registry
         run: |
-          ls
+          skopeo copy \
+            --retry-times 3 \
+            --dest-compress-format gzip \
+            oci-archive:builds/latest/x86_64/fedora-coreos*.ociarchive \
+            docker://quay.io/travier/fedora-coreos-uki-devel:latest
