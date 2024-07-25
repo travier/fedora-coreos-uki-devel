@@ -54,10 +54,8 @@ jobs:
         run: |
           sed -i "s/sudo -E / /g" /usr/lib/coreos-assembler/cmd*
           sed -i "s/sudo / /g" /usr/lib/coreos-assembler/cmd*
-          sed -i \
-            "s/efi_system_size_mb: 127/efi_system_size_mb: 512/" \
-            "s/boot_size_mb: 384/boot_size_mb: 512/" \
-            /usr/lib/coreos-assembler/osbuild-manifests/coreos.osbuild.x86_64.mpp.yaml
+          sed -i "s/efi_system_size_mb: 127/efi_system_size_mb: 512/" /usr/lib/coreos-assembler/osbuild-manifests/coreos.osbuild.x86_64.mpp.yaml
+          sed -i "s/boot_size_mb: 384/boot_size_mb: 512/" /usr/lib/coreos-assembler/osbuild-manifests/coreos.osbuild.x86_64.mpp.yaml
 
       - name: Get sources
         run: |
