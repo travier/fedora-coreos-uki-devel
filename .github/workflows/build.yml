@@ -33,9 +33,6 @@ jobs:
         COSA_PRIVILEGED: 1
       options: --security-opt=label=disable --privileged --user 0:0 --device=/dev/kvm --device=/dev/fuse
     steps:
-      # - name: Generate a key for ostree signing
-      #   run: ./gen-ostree-signing-key
-
       - name: Fixup constainers/storage.conf
         run: |
           sed -i 's/driver = "overlay"/driver = "vfs"/' /usr/share/containers/storage.conf
@@ -53,15 +50,25 @@ jobs:
           password: ${{ secrets.BOT_SECRET }}
           auth_file_path: /tmp/auth.json
 
-      - name: Get sources
+      - name: Patch coreos-assembler
         run: |
           sed -i "s/sudo -E / /g" /usr/lib/coreos-assembler/cmd*
           sed -i "s/sudo / /g" /usr/lib/coreos-assembler/cmd*
+          sed -i \
+            "s/efi_system_size_mb: 127/efi_system_size_mb: 512/" \
+            "s/boot_size_mb: 384/boot_size_mb: 512/" \
+            /usr/lib/coreos-assembler/osbuild-manifests/coreos.osbuild.x86_64.mpp.yaml
+
+      - name: Get sources
+        run: |
           cosa init "https://github.com/travier/fedora-coreos-uki-devel.git"
 
       - name: Setup overrides
         run: |
           echo TODO
+
+      # - name: Generate a key for ostree signing
+      #   run: ./gen-ostree-signing-key
 
       - name: Build container & qcow2 image
         run: |
