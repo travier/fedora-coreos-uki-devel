@@ -86,6 +86,6 @@ jobs:
           buildah push \
             --authfile /tmp/auth.json \
             --retry 3 \
-            --compress-format gzip \
+            --compression-format gzip \
             ${commit} \
             docker://quay.io/travier/fedora-coreos-uki:qcow2
