@@ -75,7 +75,7 @@ jobs:
             --retry-times 3 \
             --dest-compress-format gzip \
             oci-archive:builds/latest/x86_64/fedora-coreos-${buildid}-ostree.x86_64.ociarchive \
-            docker://quay.io/travier/fedora-coreos-uki-devel:latest
+            docker://quay.io/travier/fedora-coreos-uki:latest
 
       - name: Push to QCOW2 image to Container Registry
         run: |
@@ -88,4 +88,4 @@ jobs:
             --retry 3 \
             --compress-format gzip \
             ${commit} \
-            docker://quay.io/travier/fedora-coreos-uki-devel:qcow2
+            docker://quay.io/travier/fedora-coreos-uki:qcow2
