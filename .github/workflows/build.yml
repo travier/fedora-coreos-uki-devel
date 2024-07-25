@@ -31,17 +31,14 @@ jobs:
       image: quay.io/coreos-assembler/coreos-assembler:latest
       env:
         COSA_PRIVILEGED: 1
-      options: --security-opt=label=disable --privileged --user 0:0 --device=/dev/kvm --device=/dev/fuse --tmpfs=/tmp --volume /var/lib/containers:/var/lib/containers:rw
+      options: --security-opt=label=disable --privileged --user 0:0 --device=/dev/kvm --device=/dev/fuse --tmpfs=/tmp
     steps:
       # - name: Generate a key for ostree signing
       #   run: ./gen-ostree-signing-key
 
-      - name: Build container & qcow2 image
+      - name: Fixup constainers/storage.conf
         run: |
-          sed -i "s/sudo -E / /g" /usr/lib/coreos-assembler/cmd*
-          sed -i "s/sudo / /g" /usr/lib/coreos-assembler/cmd*
-          cosa init "https://github.com/travier/fedora-coreos-uki-devel.git"
-          cosa build
+          sed -i 's/driver = "overlay"/driver = "vfs"/' /usr/share/containers/storage.conf
 
       - name: Login to Container Registry
         uses: redhat-actions/podman-login@v1
@@ -50,6 +47,13 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.BOT_USERNAME }}
           password: ${{ secrets.BOT_SECRET }}
+
+      - name: Build container & qcow2 image
+        run: |
+          sed -i "s/sudo -E / /g" /usr/lib/coreos-assembler/cmd*
+          sed -i "s/sudo / /g" /usr/lib/coreos-assembler/cmd*
+          cosa init "https://github.com/travier/fedora-coreos-uki-devel.git"
+          cosa build
 
       - name: Push to Container Registry
         run: |
