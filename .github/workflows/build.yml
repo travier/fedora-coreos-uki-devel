@@ -39,8 +39,6 @@ jobs:
       - name: Fixup constainers/storage.conf
         run: |
           sed -i 's/driver = "overlay"/driver = "vfs"/' /usr/share/containers/storage.conf
-          mkdir -p /tmp/podman-run-0/containers/
-          ls -alh /tmp/podman-run-0/containers/
 
       - name: Login to Container Registry
         uses: redhat-actions/podman-login@v1
@@ -49,6 +47,7 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.BOT_USERNAME }}
           password: ${{ secrets.BOT_SECRET }}
+          auth_file_path: /tmp/auth.json
 
       - name: Build container & qcow2 image
         run: |
@@ -60,6 +59,7 @@ jobs:
       - name: Push to Container Registry
         run: |
           skopeo copy \
+            --authfile /tmp/auth.json \
             --retry-times 3 \
             --dest-compress-format gzip \
             oci-archive:builds/latest/x86_64/fedora-coreos*.ociarchive \
