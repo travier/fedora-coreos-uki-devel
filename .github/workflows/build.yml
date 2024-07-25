@@ -31,7 +31,7 @@ jobs:
       image: quay.io/coreos-assembler/coreos-assembler:latest
       env:
         COSA_PRIVILEGED: 1
-      options: --security-opt=label=disable --privileged --user 0:0 --device=/dev/kvm --device=/dev/fuse --tmpfs=/tmp
+      options: --security-opt=label=disable --privileged --user 0:0 --device=/dev/kvm --device=/dev/fuse
     steps:
       # - name: Generate a key for ostree signing
       #   run: ./gen-ostree-signing-key
@@ -39,7 +39,6 @@ jobs:
       - name: Fixup constainers/storage.conf
         run: |
           sed -i 's/driver = "overlay"/driver = "vfs"/' /usr/share/containers/storage.conf
-          mkdir -p /tmp/podman-run-0/containers/
 
       - name: Login to Container Registry
         uses: redhat-actions/podman-login@v1
