@@ -53,18 +53,39 @@ jobs:
           password: ${{ secrets.BOT_SECRET }}
           auth_file_path: /tmp/auth.json
 
-      - name: Build container & qcow2 image
+      - name: Get sources
         run: |
           sed -i "s/sudo -E / /g" /usr/lib/coreos-assembler/cmd*
           sed -i "s/sudo / /g" /usr/lib/coreos-assembler/cmd*
           cosa init "https://github.com/travier/fedora-coreos-uki-devel.git"
+
+      - name: Setup overrides
+        run: |
+          echo TODO
+
+      - name: Build container & qcow2 image
+        run: |
           cosa build
 
       - name: Push to Container Registry
         run: |
+          buildid="$(cat builds/builds.json | jq -r '.builds[0].id')"
           skopeo copy \
             --authfile /tmp/auth.json \
             --retry-times 3 \
             --dest-compress-format gzip \
-            oci-archive:builds/latest/x86_64/fedora-coreos*.ociarchive \
+            oci-archive:builds/latest/x86_64/fedora-coreos-${buildid}-ostree.x86_64.ociarchive \
             docker://quay.io/travier/fedora-coreos-uki-devel:latest
+
+      - name: Push to QCOW2 image to Container Registry
+        run: |
+          buildid="$(cat builds/builds.json | jq -r '.builds[0].id')"
+          container="$(buildah from scratch)"
+          buildah copy "${container}" builds/latest/x86_64/fedora-coreos-${buildid}-qemu.x86_64.qcow2 /
+          commit="$(buildah commit ${container})"
+          buildah push \
+            --authfile /tmp/auth.json \
+            --retry 3 \
+            --compress-format gzip \
+            ${commit} \
+            docker://quay.io/travier/fedora-coreos-uki-devel:qcow2
