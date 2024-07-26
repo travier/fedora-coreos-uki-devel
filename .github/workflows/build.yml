@@ -37,7 +37,7 @@ jobs:
         run: |
           dnf install -y moby-engine
           docker image prune --all --force
-          rm -rfv "/run/host/usr/local/lib/android"
+          rm -rf "/run/host/usr/local/lib/android"
           dnf remove -y moby-engine
 
       - name: Fixup constainers/storage.conf
