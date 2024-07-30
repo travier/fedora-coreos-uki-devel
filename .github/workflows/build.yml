@@ -71,7 +71,7 @@ jobs:
 
       - name: Install more packages
         run: |
-          dnf install -y sbsigntools systemd-boot-unsigned systemd-ukify
+          dnf install -y sbsigntools systemd-boot-unsigned systemd-ukify wget
 
       - name: Use patched osbuild
         run: |
