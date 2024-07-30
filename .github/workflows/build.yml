@@ -57,13 +57,17 @@ jobs:
           password: ${{ secrets.BOT_SECRET }}
           auth_file_path: /tmp/auth.json
 
-      - name: Patch coreos-assembler
+        # sed -i --follow-symlinks "s/sudo -E / /g" /usr/lib/coreos-assembler/cmd*
+        # sed -i --follow-symlinks "s/sudo / /g" /usr/lib/coreos-assembler/cmd*
+        # sed -i --follow-symlinks "s/efi_system_size_mb: 127/efi_system_size_mb: 512/" /usr/lib/coreos-assembler/osbuild-manifests/coreos.osbuild.x86_64.mpp.yaml
+        # sed -i --follow-symlinks "s/boot_size_mb: 384/boot_size_mb: 512/" /usr/lib/coreos-assembler/osbuild-manifests/coreos.osbuild.x86_64.mpp.yaml
+        # sed -i --follow-symlinks "s/nonroot_partition_sizes=513/nonroot_partition_sizes=2048/" /usr/lib/coreos-assembler/cmd-buildextend-qemu
+      - name: Use patched coreos-assembler
         run: |
-          sed -i "s/sudo -E / /g" /usr/lib/coreos-assembler/cmd*
-          sed -i "s/sudo / /g" /usr/lib/coreos-assembler/cmd*
-          sed -i "s/efi_system_size_mb: 127/efi_system_size_mb: 512/" /usr/lib/coreos-assembler/osbuild-manifests/coreos.osbuild.x86_64.mpp.yaml
-          sed -i "s/boot_size_mb: 384/boot_size_mb: 512/" /usr/lib/coreos-assembler/osbuild-manifests/coreos.osbuild.x86_64.mpp.yaml
-          sed -i "s/nonroot_partition_sizes=513/nonroot_partition_sizes=2048/" /usr/lib/coreos-assembler/cmd-buildextend-qemu
+          git clone --depth=1 -b main-uki https://github.com/travier/coreos-assembler.git
+          cd coreos-assembler
+          make KOLET_ARCHES=x86_64
+          make install
 
       - name: Get sources
         run: |
