@@ -93,8 +93,10 @@ jobs:
           wget "https://download.copr.fedorainfracloud.org/results/@CoreOS/continuous/fedora-40-x86_64/07771174-rpm-ostree/rpm-ostree-2024.6.66.g6987471c-1.fc40.x86_64.rpm"
           wget "https://download.copr.fedorainfracloud.org/results/@CoreOS/continuous/fedora-40-x86_64/07771174-rpm-ostree/rpm-ostree-libs-2024.6.66.g6987471c-1.fc40.x86_64.rpm"
 
-      # - name: Generate a key for ostree signing
-      #   run: ./gen-ostree-signing-key
+      - name: Setup Secure Boot key
+        run: |
+          git clone --depth=1 https://github.com/travier/fedora-coreos-uki.git
+          cp fedora-coreos-uki/secureboot/keys/db/db* uki/
 
       - name: Build container & qcow2 image
         run: |
