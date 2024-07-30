@@ -77,6 +77,7 @@ jobs:
         run: |
           git clone --depth=1 -b main-uki https://github.com/travier/osbuild.git
           cd osbuild
+          dnf builddep osbuild
           make rpm
           dnf install -y --allowerasing ./rpmbuild/RPMS/noarch/*.rpm
 
