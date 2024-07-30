@@ -68,15 +68,27 @@ jobs:
           cd coreos-assembler
           make KOLET_ARCHES=x86_64
           make install
+
+      - name: Install more packages
+        run: |
           dnf install -y sbsigntools systemd-boot-unsigned systemd-ukify
+
+      - name: Use patched osbuild
+        run: |
+          git clone --depth=1 -b main-uki https://github.com/travier/osbuild.git
+          cd osbuild
+          make rpm
+          dnf install -y --allowerasing ./rpmbuild/RPMS/noarch/*.rpm
 
       - name: Get sources
         run: |
+          mkdir uki
+          cd uki
           cosa init "https://github.com/travier/fedora-coreos-uki-devel.git"
 
       - name: Setup overrides
         run: |
-          cd overrides/rpm
+          cd uki/overrides/rpm
           wget "https://download.copr.fedorainfracloud.org/results/@CoreOS/continuous/fedora-40-x86_64/07771174-rpm-ostree/rpm-ostree-2024.6.66.g6987471c-1.fc40.x86_64.rpm"
           wget "https://download.copr.fedorainfracloud.org/results/@CoreOS/continuous/fedora-40-x86_64/07771174-rpm-ostree/rpm-ostree-libs-2024.6.66.g6987471c-1.fc40.x86_64.rpm"
 
@@ -85,10 +97,12 @@ jobs:
 
       - name: Build container & qcow2 image
         run: |
+          cd uki
           cosa build
 
       - name: Push to Container Registry
         run: |
+          cd uki
           buildid="$(cat builds/builds.json | jq -r '.builds[0].id')"
           skopeo copy \
             --authfile /tmp/auth.json \
@@ -99,6 +113,7 @@ jobs:
 
       - name: Push to QCOW2 image to Container Registry
         run: |
+          cd uki
           buildid="$(cat builds/builds.json | jq -r '.builds[0].id')"
           container="$(buildah from scratch)"
           buildah copy "${container}" builds/latest/x86_64/fedora-coreos-${buildid}-qemu.x86_64.qcow2 /
