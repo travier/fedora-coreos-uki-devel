@@ -98,10 +98,10 @@ jobs:
           git clone --depth=1 https://github.com/travier/fedora-coreos-uki.git
           cp fedora-coreos-uki/secureboot/keys/db/db* uki/
 
-      - name: Build container & qcow2 image
+      - name: Build container image
         run: |
           cd uki
-          cosa build
+          cosa build container
 
       - name: Push to Container Registry
         run: |
@@ -113,6 +113,11 @@ jobs:
             --dest-compress-format gzip \
             oci-archive:builds/latest/x86_64/fedora-coreos-${buildid}-ostree.x86_64.ociarchive \
             docker://quay.io/travier/fedora-coreos-uki:latest
+
+      - name: Build qcow2 image
+        run: |
+          cd uki
+          cosa build qemu
 
       - name: Push to QCOW2 image to Container Registry
         run: |
