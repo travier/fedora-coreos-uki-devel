@@ -114,6 +114,20 @@ jobs:
             oci-archive:builds/latest/x86_64/fedora-coreos-${buildid}-ostree.x86_64.ociarchive \
             docker://quay.io/travier/fedora-coreos-uki:latest
 
+      - name: Push UKI to Container Registry
+        run: |
+          cd uki
+          uki="tmp/uki"
+          container="$(buildah from scratch)"
+          buildah copy "${container}" "$uki" /
+          commit="$(buildah commit ${container})"
+          buildah push \
+            --authfile /tmp/auth.json \
+            --retry 3 \
+            --compression-format gzip \
+            ${commit} \
+            docker://quay.io/travier/fedora-coreos-uki:uki
+
       - name: Build qcow2 image
         run: |
           cd uki
