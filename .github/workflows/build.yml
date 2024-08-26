@@ -87,11 +87,11 @@ jobs:
           cd uki
           cosa init "https://github.com/travier/fedora-coreos-uki-devel.git"
 
-      - name: Setup overrides
-        run: |
-          cd uki/overrides/rpm
-          wget "https://download.copr.fedorainfracloud.org/results/@CoreOS/continuous/fedora-40-x86_64/07771174-rpm-ostree/rpm-ostree-2024.6.66.g6987471c-1.fc40.x86_64.rpm"
-          wget "https://download.copr.fedorainfracloud.org/results/@CoreOS/continuous/fedora-40-x86_64/07771174-rpm-ostree/rpm-ostree-libs-2024.6.66.g6987471c-1.fc40.x86_64.rpm"
+      # - name: Setup overrides
+      #   run: |
+      #     cd uki/overrides/rpm
+      #     wget "https://download.copr.fedorainfracloud.org/results/@CoreOS/continuous/fedora-40-x86_64/07771174-rpm-ostree/rpm-ostree-2024.6.66.g6987471c-1.fc40.x86_64.rpm"
+      #     wget "https://download.copr.fedorainfracloud.org/results/@CoreOS/continuous/fedora-40-x86_64/07771174-rpm-ostree/rpm-ostree-libs-2024.6.66.g6987471c-1.fc40.x86_64.rpm"
 
       - name: Setup Secure Boot key
         run: |
