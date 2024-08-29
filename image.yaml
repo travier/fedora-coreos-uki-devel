@@ -2,3 +2,4 @@
 # similarly to manifest.yaml. Unlike image-base.yaml, which is shared by all
 # streams.
 include: image-base.yaml
+composefs: signed
