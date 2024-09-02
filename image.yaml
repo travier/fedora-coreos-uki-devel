@@ -3,3 +3,4 @@
 # streams.
 include: image-base.yaml
 composefs: signed
+rootfs: ext4verity
