@@ -120,6 +120,7 @@ jobs:
           uki="tmp/uki"
           container="$(buildah from scratch)"
           buildah copy "${container}" "$uki" /
+          buildah copy "${container}" "tmp/systemd-bootx64-signed.efi" /
           commit="$(buildah commit ${container})"
           buildah push \
             --authfile /tmp/auth.json \
