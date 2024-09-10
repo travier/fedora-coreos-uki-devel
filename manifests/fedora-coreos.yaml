@@ -140,14 +140,6 @@ postprocess:
         done
     done
 
-    # systemd-boot refuses UKI with missing os-release entries.
-    # Fill the missing values
-    source /etc/os-release
-    cat <<EOF >> /etc/os-release
-    BUILD_ID=$OSTREE_VERSION
-    IMAGE_ID="coreos-uki-composefs-test-image"
-    IMAGE_VERSION=$OSTREE_VERSION
-    EOF
 
 remove-files:
   # We don't ship man(1) or info(1)
