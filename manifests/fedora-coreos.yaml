@@ -33,6 +33,9 @@ conditional-include:
   # Dummy test for now
   - if: releasever > 39
     include: composefs.yaml
+  # For UKI
+  - if: releasever > 39
+    include: systemd-boot.yaml
 
 ostree-layers:
   - overlay/15fcos
